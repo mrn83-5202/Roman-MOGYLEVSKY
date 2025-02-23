@@ -1,0 +1,81 @@
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import re
+import nltk
+from wordcloud import WordCloud
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from textblob import TextBlob
+from transformers import pipeline, set_seed
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
+nltk.download('punkt')
+nltk.download('stopwords')
+
+# Load dataset
+df = pd.read_csv('path_to_your_dataset.csv')
+
+# Display first few rows
+print(df.head())
+print(df.info())
+
+# Data cleaning
+print(df.isnull().sum())
+df.fillna(df.mean(), inplace=True)
+df.drop_duplicates(inplace=True)
+
+# Convert categorical variables to numerical if needed
+if 'category_column' in df.columns:
+    df['category_column'] = df['category_column'].astype('category').cat.codes
+
+# Data transformation
+scaler = MinMaxScaler()
+df['scaled_column'] = scaler.fit_transform(df[['numerical_column']])
+df_transformed = pd.get_dummies(df, columns=['category_column'])
+
+# Data decomposition
+train_set, test_set = train_test_split(df_transformed, test_size=0.2, random_state=42)
+correlation_matrix = df.corr()
+print(correlation_matrix)
+
+# Descriptive statistics
+print(df.describe())
+
+# Data visualization
+sns.histplot(df['numerical_column'], bins=10, kde=True)
+plt.show()
+
+sns.boxplot(x=df['numerical_column'])
+plt.show()
+
+sns.scatterplot(x=df['numerical_column_1'], y=df['numerical_column_2'])
+plt.show()
+
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', linewidths=0.5)
+plt.show()
+
+# Sentiment analysis
+if 'text_column' in df.columns:
+    df['clean_text'] = df['text_column'].str.lower()
+    df['clean_text'] = df['clean_text'].apply(lambda x: re.sub(r'[^a-z ]', '', str(x)))
+    tokens = df['clean_text'].apply(word_tokenize)
+    stop_words = set(stopwords.words('english'))
+    df['filtered_tokens'] = tokens.apply(lambda x: [word for word in x if word not in stop_words])
+    blob = df['clean_text'].apply(lambda x: TextBlob(x).sentiment.polarity)
+    df['sentiment'] = blob.apply(lambda x: "Positive" if x > 0 else "Negative" if x < 0 else "Neutral")
+    print(df[['text_column', 'sentiment']].head())
+
+# Text Generation with GPT-2
+generator = pipeline("text-generation", model="gpt2")
+set_seed(42)
+text_gen = generator("Artificial intelligence helps people", max_length=50, num_return_sequences=1)
+print("Generated Text:", text_gen[0]['generated_text'])
+
+# Simple Machine Learning Model
+model = LinearRegression()
+model.fit(train_set[['feature1', 'feature2']], train_set['target'])
+predictions = model.predict(test_set[['feature1', 'feature2']])
+print(predictions)
