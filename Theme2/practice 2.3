@@ -1,0 +1,42 @@
+function createForm() {
+  // Створюємо нову форму з назвою
+  var form = FormApp.create('Theme2');
+
+  // Додаємо поле для імені
+  form.addTextItem()
+    .setTitle('Roman')
+    .setHelpText('Roman-MOGYLEVSKY')
+    .setRequired(true);
+
+  // Додаємо поле для дати
+  form.addDateItem()
+    .setTitle('2025.02.11')
+    .setRequired(true)
+    .setIncludesYear(true)
+    .setFormat(FormApp.DateFormat.YEAR_MONTH_DAY);
+
+  // Додаємо випадаючий список для відділу
+  var departmentItem = form.addListItem()
+    .setTitle('Intellegence')
+    .setRequired(true);
+  
+  departmentItem.setChoices([
+    departmentItem.createChoice('Radio interception department'),
+    departmentItem.createChoice('Radio Intelligence Department'),
+    departmentItem.createChoice('HR'),
+    departmentItem.createChoice('finance department')
+  ]);
+
+  // Додаємо поле для електронної пошти з валідацією
+  var emailItem = form.addTextItem()
+    .setTitle('romanmogylevskyi@gmail.com')
+    .setRequired(true);
+  
+  emailItem.setValidation(FormApp.createTextValidation()
+    .requireTextIsEmail() // Автоматична перевірка на формат пошти
+    .build());
+
+  // Отримуємо посилання на форму та виводимо в лог
+  var formUrl = form.getPublishedUrl();
+  Logger.log('Посилання на форму: ' + formUrl);
+}
