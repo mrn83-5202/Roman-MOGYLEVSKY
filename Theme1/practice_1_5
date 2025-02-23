@@ -1,0 +1,86 @@
+name = "Roman"  # Рядок (str)
+age = 43       # Ціле число (int)
+height = 1.80  # Дійсне число (float)
+is_student = True  # Логічне значення (bool)
+
+print(name, age, height, is_student)
+print(type(name), type(age), type(height), type(is_student))
+print("Hello, this is my first Jupyter Notebook work in VS Code!")
+user_input = input("50")
+number = int(user_input)
+result = number * 2
+print(f"Результат множення {number} на 2: {result}"){
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "name = \"Roman\"  # Рядок (str)\n",
+    "age = 43       # Ціле число (int)\n",
+    "height = 1.80  # Дійсне число (float)\n",
+    "is_student = True  # Логічне значення (bool)\n",
+    "\n",
+    "print(name, age, height, is_student)\n",
+    "print(type(name), type(age), type(height), type(is_student))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "print(\"Hello, this is my first Jupyter Notebook work in VS Code!\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "user_input = input(\"50\")\n",
+    "number = int(user_input)\n",
+    "result = number * 2\n",
+    "print(f\"Результат множення {number} на 2: {result}\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Personal Information  \n",
+    "**Name:** Roman Mogylevskyi  \n",
+    "**Group:** 5202  \n",
+    "**Email:** romanmogylevskyi@gmail.com  \n",
+    "\n",
+    "## Interests:  \n",
+    "- Programming  \n",
+    "- Data Analysis  \n",
+    "- Artificial Intelligence  "
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "name": "python",
+   "version": "3.11.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
