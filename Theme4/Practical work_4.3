@@ -1,0 +1,52 @@
+
+# Імпорт бібліотек
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.metrics import r2_score, mean_squared_error
+
+# Завантаження даних
+data = pd.read_csv("train.csv")  # Замініть на шлях до файлу
+
+# Попередня обробка даних
+# Видалення стовпців з великою кількістю пропусків
+data.dropna(axis=1, thresh=0.7*len(data), inplace=True)
+
+# Заповнення пропущених значень
+numerical_cols = data.select_dtypes(include=['int64', 'float64']).columns
+data[numerical_cols] = data[numerical_cols].fillna(data[numerical_cols].median())
+
+categorical_cols = data.select_dtypes(include=['object']).columns
+for col in categorical_cols:
+    data[col].fillna(data[col].mode()[0], inplace=True)
+
+# Вибір ознак та цільової змінної
+X = data.drop("SalePrice", axis=1).select_dtypes(include=['number'])
+y = data["SalePrice"]
+
+# Розділення на тренувальний та тестовий набори
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Побудова моделі Decision Tree Regressor
+model = DecisionTreeRegressor(max_depth=5, random_state=42)
+model.fit(X_train, y_train)
+
+# Передбачення та оцінка
+y_pred = model.predict(X_test)
+
+r2 = r2_score(y_test, y_pred)
+mse = mean_squared_error(y_test, y_pred)
+
+print(f"R²: {r2:.2f}")
+print(f"MSE: {mse:.2f}")
+
+# Графік результатів
+plt.figure(figsize=(10, 6))
+plt.scatter(y_test, y_pred, alpha=0.5)
+plt.plot([y.min(), y.max()], [y.min(), y.max()], 'r--')
+plt.xlabel("Фактичні значення")
+plt.ylabel("Передбачені значення")
+plt.title("Decision Tree Regressor: Фактичні vs Передбачені")
+plt.show()
