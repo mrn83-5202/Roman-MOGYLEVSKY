@@ -1,1 +1,37 @@
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, confusion_matrix
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+import numpy as np
+import matplotlib.pyplot as plt
 
+# Splitting the data
+X_train_clf, X_test_clf, y_train_clf, y_test_clf = train_test_split(X_clf, y_clf, test_size=0.2, random_state=42)
+
+# Build the classification model
+model_clf = Sequential([
+    Dense(64, activation='relu', input_shape=(12,)),  # Input shape matches feature count
+    Dense(64, activation='relu'),
+    Dense(6, activation='softmax')  # Output layer with 6 units for 6 classes
+])
+
+# Compile the model
+model_clf.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
+# Train the model
+history = model_clf.fit(X_train_clf, y_train_clf, epochs=50, batch_size=16, verbose=1)
+history_class = history.history
+
+# Evaluate the model
+y_pred_clf = np.argmax(model_clf.predict(X_test_clf), axis=1)  # Get the class predictions
+accuracy = accuracy_score(y_test_clf, y_pred_clf)
+conf_matrix = confusion_matrix(y_test_clf, y_pred_clf)
+
+print(f"Accuracy: {accuracy}")
+print("Confusion Matrix:")
+print(conf_matrix)
+
+# Plot training accuracy
+plt.plot(history_class['accuracy'], label='Train Accuracy')
+plt.title('Історія навчання (Класифікація)')
+plt.xlabel
