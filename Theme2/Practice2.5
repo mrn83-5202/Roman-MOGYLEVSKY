@@ -1,1 +1,19 @@
+CREATE DATABASE OperationsDB;
+USE OperationsDB;
 
+CREATE TABLE Operations (
+    Operation_ID INT PRIMARY KEY,
+    Operation_Name VARCHAR(100),
+    Commander VARCHAR(100),
+    Operation_Start_Date DATE,
+    Operation_End_Date DATE
+);
+
+CREATE TABLE Operations_Staff (
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100),
+    Role VARCHAR(50),
+    Operation_ID INT,
+    Date_Assigned DATE,
+    FOREIGN KEY (Operation_ID) REFERENCES Operations(Operation_ID)
+);
