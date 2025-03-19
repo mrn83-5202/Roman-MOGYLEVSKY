@@ -1,52 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <div class="container mx-auto p-4">
-        <h1 class="text-2xl font-bold mb-4">Дашборд військових аналітиків</h1>
-      
-        <!-- Інформаційні картки -->
-        <div id="info-cards" class="grid grid-cols-3 gap-4 mb-4">
-          <!-- JS буде заповнювати -->
-        </div>
-      
-        <!-- Графік -->
-        <canvas id="chartGroups" class="mb-4"></canvas>
-      
-        <!-- Карта -->
-        <div id="map" class="h-64 mb-4"></div>
-      
-        <!-- Таблиця -->
-        <table id="student-table" class="table-auto w-full text-left">
-          <thead class="bg-gray-200">
-            <tr>
-              <th class="p-2">Повне ім'я</th>
-              <th class="p-2">Дата народження</th>
-              <th class="p-2">Ранг</th>
-              <th class="p-2">Група</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- JS буде заповнювати -->
-          </tbody>
-        </table>
-      </div>
-      
+import { mockData } from './mock.js';
 
-        <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+// Генерація інформаційних карток
+const infoCards = document.getElementById('info-cards');
+const ranks = {};
+mockData.groups.forEach(group => {
+  group.students.forEach(student => {
+    ranks[student.rank_name] = (ranks[student.rank_name] || 0) + 1;
+  });
+});
 
-    <!-- Leaflet.js CDN -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+Object.entries(ranks).forEach(([rank, count]) => {
+  const card = document.createElement('div');
+  card.className = 'p-4 bg-blue-100 rounded-lg shadow';
+  card.innerHTML = `<strong>${rank}</strong>: ${count}`;
+  infoCards.appendChild(card);
+});
 
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+// Графік по групам
+const ctx = document.getElementById('chartGroups').getContext('2d');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: mockData.groups.map(g => g.group_name),
+    datasets: [{
+      label: 'Кількість військових',
+      data: mockData.groups.map(g => g.students.length),
+      backgroundColor: 'rgba(54, 162, 235, 0.5)',
+      borderColor: 'rgba(54, 162, 235, 1)',
+      borderWidth: 1
+    }]
+  },
+  options: {
+    scales: {
+      y: { beginAtZero: true }
+    }
+  }
+});
 
-    <script type="module" src="main.js"></script>
-</body>
-</html>
+// Ініціалізація карти
+const map = L.map('map').setView([48.3794, 31.1656], 6); // Центр України
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+// Приклад маркерів для груп (можна замінити реальними даними)
+const locations = [
+  { coords: [50.4501, 30.5234], group: 'Group A' }, // Київ
+  { coords: [49.8397, 24.0297], group: 'Group B' }, // Львів
+  { coords: [46.4825, 30.7233], group: 'Group C' }, // Одеса
+];
+
+locations.forEach(loc => {
+  L.marker(loc.coords).addTo(map).bindPopup(loc.group);
+});
+
+// Заповнення таблиці
+const tbody = document.querySelector('#student-table tbody');
+mockData.groups.forEach(group => {
+  group.students.forEach(student => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td class="p-2">${student.full_name}</td>
+      <td class="p-2">${student.birth_date}</td>
+      <td class="p-2">${student.rank_name}</td>
+      <td class="p-2">${group.group_name}</td>
+    `;
+    tbody.appendChild(row);
+  });
+});
